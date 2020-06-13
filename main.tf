@@ -3,6 +3,7 @@ provide "azurerm" {
   features {}
 }
 
+# Use alias if there are multiple subscription
 # provide "azurerm" {
 #   version = "2.2.0"
 #   features {}
