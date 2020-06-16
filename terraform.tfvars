@@ -1,0 +1,6 @@
+web_server_location = "westeurope"
+web_server_rg = "web_rg"
+prefix = "web_server"
+web_server_address_space = "10.70.0.0/22"
+web_server_address_prefix = "10.70.1.0/24"
+web_server_name = "web-01"
