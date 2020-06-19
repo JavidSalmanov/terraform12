@@ -37,6 +37,7 @@ resource "azurerm_network_interface" "web_server_nic" {
     name                          = "${var.web_server_name}-ip"
     subnet_id                     = azurerm_subnet.web_server_subnet.id
     private_ip_address_allocation = "dynamic"
+    public_ip_address_id          = azurerm_public_ip.web_server_public_ip.id
   }
 }
 
@@ -72,4 +73,28 @@ resource "azurerm_network_security_rule" "web_server_nsg_rule_rdp" {
 resource "azurerm_network_interface_security_group_association" "example" {
   network_interface_id      = azurerm_network_interface.web_server_nic.id
   network_security_group_id = azurerm_network_security_group.web_server_nsg.id
+}
+
+resource "azurerm_windows_virtual_machine" "web-server" {
+  name                = var.web_server_name
+  resource_group_name = azurerm_resource_group.web_server_rg.name
+  location            = var.web_server_location
+  size                = "Standard_B1s"
+  admin_username      = "adminuser"
+  admin_password      = "P@$$w0rd1234!"
+  network_interface_ids = [
+    azurerm_network_interface.web_server_nic.id,
+  ]
+
+  os_disk {
+    caching              = "ReadWrite"
+    storage_account_type = "Standard_LRS"
+  }
+
+  source_image_reference {
+    publisher = "MicrosoftWindowsServer"
+    offer     = "WindowsServerSemiAnnual"
+    sku       = "Datacenter-Core-1709-smalldisk"
+    version   = "latest"
+  }
 }
