@@ -1,6 +1,6 @@
 web_server_location       = "westeurope"
 web_server_rg             = "web-rg"
-prefix                    = "web_server"
+prefix                    = "web-server"
 web_server_address_space  = "10.10.0.0/22"
 web_server_address_prefix = "10.10.1.0/24"
 web_server_name           = "web"

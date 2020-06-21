@@ -46,7 +46,7 @@ resource "azurerm_network_interface" "web_server_nic" {
   ip_configuration {
     name                          = "${local.web_server_name}-ip"
     private_ip_address_allocation = "Dynamic"
-    subnet_id = azurerm_subnet.web_server_subnet["web-server"].id
+    subnet_id                     = azurerm_subnet.web_server_subnet["web-server"].id
   }
 }
 
@@ -99,6 +99,13 @@ resource "azurerm_subnet_network_security_group_association" "web_server_sag" {
   subnet_id                 = azurerm_subnet.web_server_subnet["web-server"].id
 }
 
+resource "azurerm_storage_account" "storage_account" {
+  name                     = "jatorage001"
+  location                 = var.web_server_location
+  resource_group_name      = azurerm_resource_group.web_server_rg.name
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
+}
 resource "azurerm_virtual_machine_scale_set" "web-server" {
   name                = "${var.prefix}-scale-set"
   location            = var.web_server_location
@@ -130,7 +137,7 @@ resource "azurerm_virtual_machine_scale_set" "web-server" {
   }
 
   os_profile_windows_config {
-    provision_vm_agent = true
+    provision_vm_agent        = true
     enable_automatic_upgrades = true
   }
 
@@ -144,7 +151,12 @@ resource "azurerm_virtual_machine_scale_set" "web-server" {
       load_balancer_backend_address_pool_ids = [azurerm_lb_backend_address_pool.web_serber_lb_backend_pool.id]
     }
   }
-  
+
+  boot_diagnostics {
+    enabled     = true
+    storage_uri = azurerm_storage_account.storage_account.primary_blob_endpoint
+  }
+
   extension {
     name                 = "${local.web_server_name}-extension"
     publisher            = "Microsoft.Compute"
