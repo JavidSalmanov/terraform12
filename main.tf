@@ -45,7 +45,8 @@ resource "azurerm_network_interface" "web_server_nic" {
   count               = var.web_server_count
   ip_configuration {
     name                          = "${local.web_server_name}-ip"
-    private_ip_address_allocation = "dynamic"
+    private_ip_address_allocation = "Dynamic"
+    subnet_id = azurerm_subnet.web_server_subnet["web-server"].id
   }
 }
 
@@ -142,6 +143,19 @@ resource "azurerm_virtual_machine_scale_set" "web-server" {
       load_balancer_backend_address_pool_ids = [azurerm_lb_backend_address_pool.web_serber_lb_backend_pool.id]
     }
   }
+  
+  extension {
+    name                 = "${local.web_server_name}-extension"
+    publisher            = "Microsoft.Compute"
+    type                 = "CustomScriptExtension"
+    type_handler_version = "1.10"
+
+    settings = <<SETTINGS
+    {   "fileUris": ["https://raw.githubusercontent.com/eltimmo/learning/master/azureInstallWebServer.ps1"],
+        "commandToExecute": "start powershell -ExecutionPolicy Unrestricted -File azureInstallWebServer.ps1"
+    }
+    SETTINGS
+  }
 }
 resource "azurerm_lb" "web_server_lb" {
   name                = "${var.prefix}-lb"
@@ -149,7 +163,7 @@ resource "azurerm_lb" "web_server_lb" {
   resource_group_name = azurerm_resource_group.web_server_rg.name
 
   frontend_ip_configuration {
-    name                 = "${var.prefix}-lb-fontend"
+    name                 = "${var.prefix}-lb-fontend-ip"
     public_ip_address_id = azurerm_public_ip.web_server_lb_public_ip.id
   }
 }
@@ -174,7 +188,7 @@ resource "azurerm_lb_rule" "web_server_lb_http_rule" {
   protocol                       = "Tcp"
   frontend_port                  = 80
   backend_port                   = 80
-  frontend_ip_configuration_name = "${var.prefix}-lb-frontend-ip"
+  frontend_ip_configuration_name = "${var.prefix}-lb-fontend-ip"
   probe_id                       = azurerm_lb_probe.web_server_lb_http_probe.id
   backend_address_pool_id        = azurerm_lb_backend_address_pool.web_serber_lb_backend_pool.id
 }
