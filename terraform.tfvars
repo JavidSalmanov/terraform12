@@ -8,5 +8,5 @@ environment               = "development"
 web_server_count          = 2
 web_server_subnets = {
   web-server         = "10.10.1.0/24"
-  bustion-subnet = "10.10.2.0/24"
+  bustion-server = "10.10.2.0/24"
 }
