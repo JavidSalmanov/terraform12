@@ -3,4 +3,5 @@ prefix                    = "web-server"
 web_server_name           = "web"
 environment               = "development"
 web_server_count          = 2
-terraform_script_version = "1.0.0"
+terraform_script_version  = "1.0.0"
+domain_name_label         = "tf-ja-v2"

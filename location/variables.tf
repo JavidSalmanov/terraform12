@@ -24,13 +24,17 @@ variable "web_server_subnets" {
   type = map
 }
 
-variable  "terraform_script_version" {
-  type = string 
+variable "terraform_script_version" {
+  type = string
 }
 
 variable "admin_password" {
   type = string
 }
 variable "web_server_address_space" {
+  type = string
+}
+
+variable "domain_name_label" {
   type = string
 }
