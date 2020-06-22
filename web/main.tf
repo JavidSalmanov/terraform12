@@ -19,7 +19,7 @@ module "location_westeurope" {
   web_server_count         = var.web_server_count
   web_server_subnets = {
     web-server     = "10.10.1.0/24"
-    bastion-server = "10.10.2.0/24"
+    AzureBastionSubnet = "10.10.2.0/24"
   }
   terraform_script_version = var.terraform_script_version
   admin_password           = data.azurerm_key_vault_secret.admin_password.value
@@ -38,7 +38,7 @@ module "location_northeurope" {
   web_server_count         = var.web_server_count
   web_server_subnets = {
     web-server     = "10.20.1.0/24"
-    bastion-server = "10.20.2.0/24"
+    AzureBastionSubnet = "10.20.2.0/24"
   }
   terraform_script_version = var.terraform_script_version
   admin_password           = data.azurerm_key_vault_secret.admin_password.value
